@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+
+<html>
+  <head>
+  
+    <meta name="viewport" content="initial-scale=1.0, width=device-width" />
+
+    <script src="https://js.api.here.com/v3/3.1/mapsjs-core.js"
+      type="text/javascript" charset="utf-8"></script>
+  
+    <script src="https://js.api.here.com/v3/3.1/mapsjs-service.js"
+      type="text/javascript" charset="utf-8"></script>
+
+    <script>
+
+    function initGeolocation(){
+      console.log("called initGeolocation");
+      if( navigator.geolocation ){
+         // Call getCurrentPosition with success and failure callbacks
+         navigator.geolocation.getCurrentPosition( success, fail );
+      }
+      else{
+         alert("Sorry, your browser does not support geolocation services.");
+      }
+    }
+
+    function success(position){
+
+     let userLongitude = position.coords.longitude;
+     let userLatitude  = position.coords.latitude;
+
+      // Initialize the platform object
+      var platform = new H.service.Platform({
+        'apikey': 'qzywSaIg3uRMzvxu88ZvqAL0Cd4EBjAVRGIoqjDZfvk'
+      });
+
+      var maptypes = platform.createDefaultLayers();
+
+      var map = new H.Map(
+        document.getElementById('mapContainer'),
+        maptypes.vector.normal.map,
+        {
+          zoom: 15,
+          center: { lng: userLongitude, lat: userLatitude }
+        }
+      );
+    }
+
+    function fail(){
+      alert("couldn't obtain location");
+    }
+
+    </script>
+
+  </head>
+
+  <body style="padding: 0; margin: 0;" window.onload=initGeolocation() >
+    <div style="width: 100vw; height: 100vh" id="mapContainer"></div>
+  </body>
+
+</html>
