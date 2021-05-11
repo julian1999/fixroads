@@ -12,6 +12,8 @@
     <script type="text/javascript" src="https://js.api.here.com/v3/3.1/mapsjs-mapevents.js"></script>
 
     <script>
+    const API_ACCESS_KEY = 'qzywSaIg3uRMzvxu88ZvqAL0Cd4EBjAVRGIoqjDZfvk';
+    const QUERY_PREFIX   = 'https://geocode.search.hereapi.com/v1/geocode?q='
 
     function initGeolocation(){
       if( navigator.geolocation ){
@@ -30,8 +32,7 @@
 
       // Initialize the platform object
       var platform = new H.service.Platform({
-        'apikey': 'qzywSaIg3uRMzvxu88ZvqAL0Cd4EBjAVRGIoqjDZfvk'
-      });
+        'apikey': API_ACCESS_KEY });
 
       var maptypes = platform.createDefaultLayers();
 
@@ -51,11 +52,31 @@
 
       var behavior = new H.mapevents.Behavior(new H.mapevents.MapEvents(map));
      
-      var ui = H.ui.UI.createDefault(map, defaultLayers);
+      var ui = H.ui.UI.createDefault(map, maptypes);
     }
 
     function fail(){
       alert("couldn't obtain location");
+    }
+
+    function handleSearchRoad(){
+      let roadNameFull = document.getElementById("searchBar").value;
+      let roadNameComponents = roadNameFull.split(/[ ,]+/);
+
+      let ROAD_NAME = '';
+      roadNameComponents.forEach(component => {
+        ROAD_NAME += component + '+';
+      });
+
+      const url= QUERY_PREFIX + ROAD_NAME + '&apiKey=' + API_ACCESS_KEY
+
+      fetch(url)
+      .then(res => res.json())
+      .then((out) => {
+        console.log('Checkout this JSON! ', out);
+      })
+      .catch(err => { throw err });
+
     }
 
     </script>
@@ -63,7 +84,12 @@
   </head>
 
   <body style="padding: 0; margin: 0;" onload="initGeolocation()" >
-    <div style="width: 100vw; height: 100vh" id="mapContainer"></div>
+    <div style="width: 100vw; height: 100vh" id="mapContainer">
+      <center>
+        <input type="text" id="searchBar" onsubmit="search()">
+        <input type="submit" id="searchButton" value="Submit" onclick="handleSearchRoad()">
+      </center>
+    </div>
   </body>
 
 </html>
