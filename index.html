@@ -5,16 +5,15 @@
   
     <meta name="viewport" content="initial-scale=1.0, width=device-width" />
 
-    <script src="https://js.api.here.com/v3/3.1/mapsjs-core.js"
-      type="text/javascript" charset="utf-8"></script>
-  
-    <script src="https://js.api.here.com/v3/3.1/mapsjs-service.js"
-      type="text/javascript" charset="utf-8"></script>
+    <link rel="stylesheet" type="text/css" href="https://js.api.here.com/v3/3.1/mapsjs-ui.css" />
+    <script type="text/javascript" src="https://js.api.here.com/v3/3.1/mapsjs-core.js"></script>
+    <script type="text/javascript" src="https://js.api.here.com/v3/3.1/mapsjs-service.js"></script>
+    <script type="text/javascript" src="https://js.api.here.com/v3/3.1/mapsjs-ui.js"></script>
+    <script type="text/javascript" src="https://js.api.here.com/v3/3.1/mapsjs-mapevents.js"></script>
 
     <script>
 
     function initGeolocation(){
-      console.log("called initGeolocation");
       if( navigator.geolocation ){
          // Call getCurrentPosition with success and failure callbacks
          navigator.geolocation.getCurrentPosition( success, fail );
@@ -36,14 +35,23 @@
 
       var maptypes = platform.createDefaultLayers();
 
+      // Initialize the map at user's coordinates
       var map = new H.Map(
         document.getElementById('mapContainer'),
-        maptypes.vector.normal.map,
+        maptypes.raster.normal.mapnight, //maptypes.vector.normal.map
         {
           zoom: 15,
           center: { lng: userLongitude, lat: userLatitude }
         }
       );
+
+      window.addEventListener('resize', () => 
+        map.getViewPort().resize()
+      );
+
+      var behavior = new H.mapevents.Behavior(new H.mapevents.MapEvents(map));
+     
+      var ui = H.ui.UI.createDefault(map, defaultLayers);
     }
 
     function fail(){
