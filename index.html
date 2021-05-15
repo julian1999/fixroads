@@ -60,8 +60,8 @@
     }
 
     function handleSearchRoad(){
-      let roadNameFull = document.getElementById("searchBar").value;
-      let roadNameComponents = roadNameFull.split(/[ ,]+/);
+      let roadNameInput = document.getElementById("searchBar").value;
+      let roadNameComponents = roadNameInput.split(/[ ,]+/);
 
       let ROAD_NAME = '';
       roadNameComponents.forEach(component => {
@@ -73,7 +73,11 @@
       fetch(url)
       .then(res => res.json())
       .then((out) => {
-        console.log('Checkout this JSON! ', out);
+        console.log('Checkout this JSON! ', out['items']);
+        let coordinates = out['items'][0]['position'];
+        let latitude = coordinates['lat'];
+        let longitude = coordinates['lng'];
+        let roadNameOfficial = out['items'][0]['title'];
       })
       .catch(err => { throw err });
 
@@ -86,7 +90,7 @@
   <body style="padding: 0; margin: 0;" onload="initGeolocation()" >
     <div style="width: 100vw; height: 100vh" id="mapContainer">
       <center>
-        <input type="text" id="searchBar" onsubmit="search()">
+        <input type="text" id="searchBar">
         <input type="submit" id="searchButton" value="Submit" onclick="handleSearchRoad()">
       </center>
     </div>
