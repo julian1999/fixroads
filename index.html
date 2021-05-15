@@ -13,7 +13,8 @@
 
     <script>
     const API_ACCESS_KEY = 'qzywSaIg3uRMzvxu88ZvqAL0Cd4EBjAVRGIoqjDZfvk';
-    const QUERY_PREFIX   = 'https://geocode.search.hereapi.com/v1/geocode?q='
+    const QUERY_PREFIX   = 'https://geocode.search.hereapi.com/v1/geocode?q=';
+    var map; // global reference to the map object
 
     function initGeolocation(){
       if( navigator.geolocation ){
@@ -27,6 +28,7 @@
 
     function success(position){
 
+     // User's longitude and latitude coordinates according to their browser
      let userLongitude = position.coords.longitude;
      let userLatitude  = position.coords.latitude;
 
@@ -34,10 +36,11 @@
       var platform = new H.service.Platform({
         'apikey': API_ACCESS_KEY });
 
-      var maptypes = platform.createDefaultLayers();
+      // Obtain the platform's different default map types
+      maptypes = platform.createDefaultLayers();
 
       // Initialize the map at user's coordinates
-      var map = new H.Map(
+      map = new H.Map(
         document.getElementById('mapContainer'),
         maptypes.raster.normal.mapnight, //maptypes.vector.normal.map
         {
@@ -46,13 +49,14 @@
         }
       );
 
+      // Event listener for when user resizes the map
       window.addEventListener('resize', () => 
         map.getViewPort().resize()
       );
 
-      var behavior = new H.mapevents.Behavior(new H.mapevents.MapEvents(map));
+      let behavior = new H.mapevents.Behavior(new H.mapevents.MapEvents(map));
      
-      var ui = H.ui.UI.createDefault(map, maptypes);
+      let ui = H.ui.UI.createDefault(map, maptypes);
     }
 
     function fail(){
@@ -60,14 +64,20 @@
     }
 
     function handleSearchRoad(){
+  
+      // Road name typed in by user at the search bar
       let roadNameInput = document.getElementById("searchBar").value;
-      let roadNameComponents = roadNameInput.split(/[ ,]+/);
 
+      // Road name broken up by tokens (words)
+      let roadNameTokens = roadNameInput.split(/[ ,]+/);
+
+      // Road name string formatted for valid API endpoint query
       let ROAD_NAME = '';
-      roadNameComponents.forEach(component => {
-        ROAD_NAME += component + '+';
+      roadNameTokens.forEach(token => {
+        ROAD_NAME += token + '+';
       });
 
+      // API endpoint to obtain JSON response of road's details
       const url= QUERY_PREFIX + ROAD_NAME + '&apiKey=' + API_ACCESS_KEY
 
       fetch(url)
@@ -78,6 +88,7 @@
         let latitude = coordinates['lat'];
         let longitude = coordinates['lng'];
         let roadNameOfficial = out['items'][0]['title'];
+        map.setCenter({'lat' : latitude, 'lng' : longitude});
       })
       .catch(err => { throw err });
 
