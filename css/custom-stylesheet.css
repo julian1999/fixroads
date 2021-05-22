@@ -1,0 +1,33 @@
+#mainBody{
+  padding: 0; 
+  margin: 0;
+}
+
+#mapContainer{
+  width: 100vw; 
+  height: 100vh;
+}
+
+#infoBoxDiv{
+  color: black;
+  margin: 0 auto;
+  text-align: center;
+  background-color: gray;
+  font-size: 2rem;
+  width: 40%;
+  height: 30%;
+
+  top: 30%;
+  left: 30%;
+  opacity: 0.7;
+
+  z-index: 1;
+  position: absolute;
+
+}
+
+#searchBar{
+  position: fixed;
+  z-index: 1;
+}
+

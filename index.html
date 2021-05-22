@@ -6,6 +6,7 @@
     <meta name="viewport" content="initial-scale=1.0, width=device-width" />
 
     <link rel="stylesheet" type="text/css" href="https://js.api.here.com/v3/3.1/mapsjs-ui.css" />
+    <link rel="stylesheet" type="text/css" href="./css/custom-stylesheet.css" />
     <script type="text/javascript" src="https://js.api.here.com/v3/3.1/mapsjs-core.js"></script>
     <script type="text/javascript" src="https://js.api.here.com/v3/3.1/mapsjs-service.js"></script>
     <script type="text/javascript" src="https://js.api.here.com/v3/3.1/mapsjs-ui.js"></script>
@@ -66,7 +67,7 @@
     function handleSearchRoad(){
   
       // Road name typed in by user at the search bar
-      let roadNameInput = document.getElementById("searchBar").value;
+      let roadNameInput = document.getElementById('searchInput').value;
 
       // Road name broken up by tokens (words)
       let roadNameTokens = roadNameInput.split(/[ ,]+/);
@@ -89,21 +90,63 @@
         let longitude = coordinates['lng'];
         let roadNameOfficial = out['items'][0]['title'];
         map.setCenter({'lat' : latitude, 'lng' : longitude});
+
+        createInfoBox(roadNameOfficial, 0); // TODO: actual vote count
       })
       .catch(err => { throw err });
 
+      // Create the pop up box to display the road name and its vote count
+      function createInfoBox(roadName, votes){
+        // create all the elements needed
+        let body = document.getElementById('mapContainer');
+        let infoBoxDiv = document.createElement('div');
+        let roadNameParagraph = document.createElement('p');
+        let votesParagraph = document.createElement('p');
+        let voteButton = document.createElement('button');
+        let closeInfoBoxButton = document.createElement('button');
+
+        // configure all the elements
+        roadNameParagraph.innerText = roadName;
+        votesParagraph.innerText = 'Votes: ' + votes;
+        infoBoxDiv.id = 'infoBoxDiv';
+        infoBoxDiv.className = 'box overlay';
+        closeInfoBoxButton.innerText = 'X';
+        closeInfoBoxButton.onclick = closeInfoBox;
+        voteButton.innerText = 'Vote';
+        voteButton.onclick = handleVote;
+
+        // append the elements as children to respective parents
+        infoBoxDiv.appendChild(roadNameParagraph);
+        infoBoxDiv.appendChild(votesParagraph);
+        infoBoxDiv.appendChild(closeInfoBoxButton);
+        infoBoxDiv.appendChild(voteButton);
+        body.appendChild(infoBoxDiv);
+      }
+    }
+
+    function closeInfoBox(){
+      console.log('TODO: close info box');
+    }
+
+    // Handle the request for a user voting for a particular road
+    function handleVote(roadName){
+      console.log('TODO: implement voting for road ' + roadName);
     }
 
     </script>
 
   </head>
 
-  <body style="padding: 0; margin: 0;" onload="initGeolocation()" >
-    <div style="width: 100vw; height: 100vh" id="mapContainer">
-      <center>
-        <input type="text" id="searchBar">
-        <input type="submit" id="searchButton" value="Submit" onclick="handleSearchRoad()">
-      </center>
+  <body id='mainBody' onload='initGeolocation()' >
+
+    <center>
+      <div id='searchBar'>
+        <input type='text' id='searchInput'>
+        <input type='submit' id='searchButton' value='Search' onclick='handleSearchRoad()'>
+      </div>
+    </center>
+
+    <div id='mapContainer'>
     </div>
   </body>
 
