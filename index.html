@@ -98,7 +98,7 @@
       // Create the pop up box to display the road name and its vote count
       function createInfoBox(roadName, votes){
         // create all the elements needed
-        let body = document.getElementById('mapContainer');
+        let mapContainer = document.getElementById('mapContainer');
         let infoBoxDiv = document.createElement('div');
         let roadNameParagraph = document.createElement('p');
         let votesParagraph = document.createElement('p');
@@ -120,12 +120,18 @@
         infoBoxDiv.appendChild(votesParagraph);
         infoBoxDiv.appendChild(closeInfoBoxButton);
         infoBoxDiv.appendChild(voteButton);
-        body.appendChild(infoBoxDiv);
+        mapContainer.appendChild(infoBoxDiv);
       }
     }
 
+    // Handle closing the information box
     function closeInfoBox(){
-      console.log('TODO: close info box');
+
+      // Get the parent element
+      let mapContainer = document.getElementById('mapContainer');
+
+      // Remove the info box div from its children list
+      mapContainer.removeChild(document.getElementById('infoBoxDiv'));
     }
 
     // Handle the request for a user voting for a particular road
@@ -147,6 +153,7 @@
     </center>
 
     <div id='mapContainer'>
+      <!-- Inside of this div is where the map will be rendered -->
     </div>
   </body>
 
