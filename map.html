@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+
+<html>
+  <head>
+  
+    <meta name="viewport" content="initial-scale=1.0, width=device-width" />
+
+    <link rel="stylesheet" type="text/css" href="https://js.api.here.com/v3/3.1/mapsjs-ui.css" />
+    <link rel="stylesheet" type="text/css" href="./css/custom-stylesheet.css" />
+    <script type="text/javascript" src="https://js.api.here.com/v3/3.1/mapsjs-core.js"></script>
+    <script type="text/javascript" src="https://js.api.here.com/v3/3.1/mapsjs-service.js"></script>
+    <script type="text/javascript" src="https://js.api.here.com/v3/3.1/mapsjs-ui.js"></script>
+    <script type="text/javascript" src="https://js.api.here.com/v3/3.1/mapsjs-mapevents.js"></script>
+
+    <script>
+    const API_ACCESS_KEY = 'qzywSaIg3uRMzvxu88ZvqAL0Cd4EBjAVRGIoqjDZfvk';
+    const QUERY_PREFIX   = 'https://geocode.search.hereapi.com/v1/geocode?q=';
+    var map; // global reference to the map object
+
+    function initGeolocation(){
+      if( navigator.geolocation ){
+         // Call getCurrentPosition with success and failure callbacks
+         navigator.geolocation.getCurrentPosition( success, fail );
+      }
+      else{
+         alert("Sorry, your browser does not support geolocation services.");
+      }
+    }
+
+    function success(position){
+
+     // User's longitude and latitude coordinates according to their browser
+     let userLongitude = position.coords.longitude;
+     let userLatitude  = position.coords.latitude;
+
+      // Initialize the platform object
+      var platform = new H.service.Platform({
+        'apikey': API_ACCESS_KEY });
+
+      // Obtain the platform's different default map types
+      maptypes = platform.createDefaultLayers();
+
+      // Initialize the map at user's coordinates
+      map = new H.Map(
+        document.getElementById('mapContainer'),
+        maptypes.raster.normal.mapnight, //maptypes.vector.normal.map
+        {
+          zoom: 15,
+          center: { lng: userLongitude, lat: userLatitude }
+        }
+      );
+
+      // Event listener for when user resizes the map
+      window.addEventListener('resize', () => 
+        map.getViewPort().resize()
+      );
+
+      let behavior = new H.mapevents.Behavior(new H.mapevents.MapEvents(map));
+     
+      let ui = H.ui.UI.createDefault(map, maptypes);
+    }
+
+    function fail(){
+      alert("couldn't obtain location");
+    }
+
+    function handleSearchRoad(){
+  
+      // Road name typed in by user at the search bar
+      let roadNameInput = document.getElementById('searchInput').value;
+
+      // Road name broken up by tokens (words)
+      let roadNameTokens = roadNameInput.split(/[ ,]+/);
+
+      // Road name string formatted for valid API endpoint query
+      let ROAD_NAME = '';
+      roadNameTokens.forEach(token => {
+        ROAD_NAME += token + '+';
+      });
+
+      // API endpoint to obtain JSON response of road's details
+      const url= QUERY_PREFIX + ROAD_NAME + '&apiKey=' + API_ACCESS_KEY
+
+      fetch(url)
+      .then(res => res.json())
+      .then((out) => {
+        console.log('Checkout this JSON! ', out['items']);
+
+        // Close info box if one was previously open
+        closeInfoBox();
+
+        if(out['items'].length == 0){
+          // Create a new info box for this search
+          errorMessage = `"${roadNameInput}" not found`
+          createInfoBox(errorMessage, 0, true);
+        }
+        else{
+          let coordinates = out['items'][0]['position'];
+          let latitude = coordinates['lat'];
+          let longitude = coordinates['lng'];
+          let roadNameOfficial = out['items'][0]['title'];
+          map.setCenter({'lat' : latitude, 'lng' : longitude});
+
+          // Create a new info box for this search
+          createInfoBox(roadNameOfficial, 0, false); // TODO: actual vote count
+        }
+
+
+      })
+      .catch(err => { throw err });
+
+      // Create the pop up box to display the road name and its vote count
+      function createInfoBox(roadName, votes, error){
+        // create all the elements needed
+        let mapContainer = document.getElementById('mapContainer');
+        let infoBoxDiv = document.createElement('div');
+        let roadNameParagraph = document.createElement('p');
+        let votesParagraph = document.createElement('p');
+        let voteButton = document.createElement('button');
+        let closeInfoBoxButton = document.createElement('button');
+
+        // configure all the elements
+        roadNameParagraph.innerText = roadName;
+        votesParagraph.innerText = 'Votes: ' + votes;
+        infoBoxDiv.id = 'infoBoxDiv';
+        infoBoxDiv.className = 'box overlay';
+        closeInfoBoxButton.innerText = 'X';
+        closeInfoBoxButton.onclick = closeInfoBox;
+        voteButton.innerText = 'Vote';
+        voteButton.onclick = handleVote;
+
+        // append the elements as children to respective parents
+        infoBoxDiv.appendChild(roadNameParagraph);
+        if(!error){
+          infoBoxDiv.appendChild(votesParagraph);
+          infoBoxDiv.appendChild(closeInfoBoxButton);
+          infoBoxDiv.appendChild(voteButton);
+        }
+        mapContainer.appendChild(infoBoxDiv);
+      }
+    }
+
+    // Handle closing the information box
+    function closeInfoBox(){
+
+      // Get the parent element
+      let mapContainer = document.getElementById('mapContainer');
+
+      // Remove the info box div from its children list
+      if(document.getElementById('infoBoxDiv') !== null){
+        mapContainer.removeChild(document.getElementById('infoBoxDiv'));
+      }
+    }
+
+    // Handle the request for a user voting for a particular road
+    function handleVote(roadName){
+      console.log('TODO: implement voting for road ' + roadName);
+    }
+
+    </script>
+
+  </head>
+
+  <body id='mainBody' onload='initGeolocation()' >
+
+    <center>
+      <div id='searchBar'>
+        <input type='text' id='searchInput'>
+        <input type='submit' id='searchButton' value='Search' onclick='handleSearchRoad()'>
+      </div>
+    </center>
+
+    <div id='mapContainer'>
+      <!-- Inside of this div is where the map will be rendered -->
+    </div>
+  </body>
+
+</html>

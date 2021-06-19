@@ -31,3 +31,22 @@
   z-index: 1;
 }
 
+#landingPageBody{
+  background-repeat: no-repeat;
+  background-image: url('../images/road-clipart-road-clipart-04.jpg');
+  background-size: cover;
+}
+
+#title{
+  font-size: 6rem;
+  margin: 0;
+  line-height: 1.5;
+  font-family: 'Nunito', sans-serif;
+}
+
+#subTitle{
+  font-size: 3rem;
+  margin: 0;
+  font-family: 'Nunito', sans-serif;
+  line-height: 0;
+}
