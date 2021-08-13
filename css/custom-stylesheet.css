@@ -33,7 +33,7 @@
 
 #landingPageBody{
   background-repeat: no-repeat;
-  background-image: url('../images/road-clipart-road-clipart-04.jpg');
+  background-image: url('../images/usroad.png');
   background-size: cover;
 }
 
@@ -49,4 +49,92 @@
   margin: 0;
   font-family: 'Nunito', sans-serif;
   line-height: 0;
+}
+
+#authButtonsDiv{
+  margin: 2rem 0 0 0;
+  padding: 1rem;
+}
+
+#authBoxDiv{
+  color: black;
+}
+
+.authInput{
+  width: 20rem;
+  height: 2rem;
+  position: relative;
+  display: block;
+  margin : 0.25rem auto;
+  background: transparent;
+  color: white;
+  border: 0.25rem solid white;
+  border-radius: 2rem;
+  padding: 0.25rem;
+  font-family: 'Nunito', sans-serif;
+  font-weight: 900;
+  text-align: center;
+  outline: none;
+  font-size: 1rem;
+  background-color: black;
+}
+
+#titleDiv{
+  color: white;
+}
+
+.authButton{
+  font-family: 'Nunito', sans-serif;
+  font-size: 2.5rem;
+  padding: 0 2rem 0 2rem;
+  border-radius: 2rem;
+  background: none;
+  color: white;
+  border: 0.25rem solid white;
+}
+
+.authButton:hover{
+  cursor: pointer;
+}
+
+.centeredButton{
+  position: relative;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.errorMessage{
+  color: red;
+  font-size: 2rem;
+  font-family: 'Nunito', sans-serif;
+}
+
+footer{
+  position: absolute;
+  bottom: 0;
+  color: white;
+  margin: 2rem;
+  font-family: 'Nunito', sans-serif;
+}
+
+a {
+  margin: 0 auto;
+  text-decoration: none;
+  color: white;
+}
+
+a:visited{
+  color: white;
+}
+
+::placeholder { /* Chrome, Firefox, Opera, Safari 10.1+ */
+  color: white;
+}
+
+:-ms-input-placeholder { /* Internet Explorer 10-11 */
+  color: white;
+}
+
+::-ms-input-placeholder { /* Microsoft Edge */
+  color: white;
 }
